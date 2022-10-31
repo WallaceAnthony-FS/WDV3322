@@ -1,0 +1,35 @@
+{
+  "name": "wdv3322_assignment",
+  "version": "0.0.1",
+  "description": "FullSail Assignment for WDV3322",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WallaceAnthony-FS/WDV3322.git"
+  },
+  "keywords": [
+    "nodejs",
+    "mongoose",
+    "mongodb",
+    "assignment",
+    "fullsail"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WallaceAnthony-FS/WDV3322/issues"
+  },
+  "homepage": "https://github.com/WallaceAnthony-FS/WDV3322#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.7.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
