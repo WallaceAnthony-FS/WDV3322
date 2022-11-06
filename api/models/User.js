@@ -24,7 +24,7 @@ const userSchema = mongoose.Schema({
         type: String
     },
     password: {
-        type: String
+        type: String,
     },
 })
 
