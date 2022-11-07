@@ -4,7 +4,8 @@
   "description": "FullSail Assignment for WDV3322",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "jest": "^29.2.2",
     "nodemon": "^2.0.20"
   }
 }
