@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "f99f2450-a1d6-438a-9ea3-783e7ea64206",
+		"name": "WDV3322-TESTS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Signup",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Should be able to signup a new user and respond with appropriate data.\", () => {",
+							"    const body = JSON.parse(pm.request.body.raw)",
+							"    const response = pm.response.json()",
+							"    pm.environment.set(\"email\", body.email)",
+							"    pm.environment.set(\"password\", body.password)",
+							"",
+							"    pm.response.to.have.status(200)",
+							"    pm.expect(response.user.email).to.equal(body.email)",
+							"    pm.expect(response.user.password).to.equal(null)",
+							"    pm.expect(response.user.firstName).to.equal(body.firstName)",
+							"    pm.expect(response.user.lastName).to.equal(body.lastName)",
+							"    pm.expect(response.user.address).to.equal(body.address)",
+							"    pm.expect(response.user.city).to.equal(body.city)",
+							"    pm.expect(response.user.state).to.equal(body.state)",
+							"    pm.expect(response.user.zip).to.equal(body.zip)",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"test-firstName\",\n    \"lastName\": \"test-lastName\",\n    \"address\": \"test-address\",\n    \"city\": \"test-city\",\n    \"state\": \"test-state\",\n    \"zip\": \"test-zip\",\n    \"email\": \"test{{$timestamp}}@mail.com\",\n    \"password\": \"password123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseurl}}/users/signup",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"users",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Should allow a user to login and return a jwt\", () => {",
+							"    const response = pm.response.json()",
+							"",
+							"    pm.response.to.have.status(200)",
+							"    pm.expect(response.token).to.exist",
+							"    pm.environment.set(\"token\", response.token)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseurl}}/users/login",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Should allow a user view profile with valid JWT\", () => {",
+							"    const response = pm.response.json()",
+							"",
+							"    pm.response.to.have.status(200)",
+							"    pm.expect(response.message._id).to.exist",
+							"    pm.expect(response.message.email).to.equal(pm.environment.get(\"email\"))",
+							"    pm.expect(response.message.firstName).to.equal('test-firstName')",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseurl}}/users/profile",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"users",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signup-Email Exists",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Should be able to signup a new user and respond with appropriate data.\", () => {",
+							"    const response = pm.response.json()",
+							"",
+							"    pm.response.to.have.status(409)",
+							"    pm.expect(response.message).to.equal(\"User already exists.\")",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"test-firstName\",\n    \"lastName\": \"test-lastName\",\n    \"address\": \"test-address\",\n    \"city\": \"test-city\",\n    \"state\": \"test-state\",\n    \"zip\": \"test-zip\",\n    \"email\": \"{{email}}\",\n    \"password\": \"password123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseurl}}/users/signup",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"users",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login-Incorrect Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Should allow a user to login and return a jwt\", () => {",
+							"    const response = pm.response.json()",
+							"",
+							"    pm.response.to.have.status(401)",
+							"    pm.expect(response.message).to.exist",
+							"    pm.expect(response.message).to.equal(\"Authorization Failed\")",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"incorrectpassword\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseurl}}/users/login",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Profile-Invalid JWT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Should allow a user view profile with valid JWT\", () => {",
+							"    const response = pm.response.json()",
+							"",
+							"    pm.response.to.have.status(400)",
+							"    pm.expect(response.message).to.exist",
+							"    pm.expect(response.message).to.equal(\"Authorization Failed\")",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzcxZDgxMDAwOWY0OTliMDYxMTY0MjgiLCJlbWFpbCI6InRlc3QxNjY4NDA1MjY0QG1haWwuY29tIiwiZmlyc3Rp",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseurl}}/users/profile",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"users",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseurl",
+			"value": "localhost:3001",
+			"type": "default"
+		}
+	]
+}
