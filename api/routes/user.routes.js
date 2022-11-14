@@ -1,15 +1,18 @@
 const express = require("express")
+const jwt = require("jsonwebtoken")
+require("dotenv").config()
 const { Types } = require("mongoose")
 const { findUser, saveUser } = require("../../db/db")
 const User = require("../models/User")
 
 const router = express.Router()
 const bcrypt = require("bcrypt")
+const checkAuth = require("../../auth/checkAuth")
 
 // users/profile
-router.get("/profile", (req, res) => {
-    res.send({
-        message: `${req.path} - ${req.method}`
+router.get("/profile", checkAuth, (req, res) => {
+    res.status(200).json({
+        message: req.userData
     })
 })
 
@@ -51,9 +54,12 @@ router.post("/login", async (req, res) => {
         bcrypt.compare(req.body.password, foundUser.password, (err, result) => {
             if(err) return res.status(500).json({ message: err.message })
             if(result){
-                return res.status(200).json({
-                    message: "Authorization Successful"
-                })
+                const token = jwt.sign({
+                    _id: foundUser._id,
+                    email: foundUser.email,
+                    firstName: foundUser.firstName
+                }, process.env.jwt_key)
+                return res.status(200).json({ token })
             } else {
                 return res.status(401).json({
                     message: "Authorization Failed"
