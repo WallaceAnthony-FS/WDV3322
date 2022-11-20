@@ -37,7 +37,7 @@ router.post("/signup", async (req, res) => {
                 // save user
                 await saveUser(user)
                 // set password to null on response to not leak hashed passwords
-                res.status(200).send({ user: { ...user._doc, password: null }})
+                res.status(201).send({ user: { ...user._doc, password: null }, message: "User created."})
             }
         })
     }
@@ -57,9 +57,14 @@ router.post("/login", async (req, res) => {
                 const token = jwt.sign({
                     _id: foundUser._id,
                     email: foundUser.email,
-                    firstName: foundUser.firstName
+                    firstName: foundUser.firstName,
+                    lastName: foundUser.lastName,
+                    address: foundUser.address,
+                    city: foundUser.city,
+                    state: foundUser.state,
+                    zip: foundUser.zip
                 }, process.env.jwt_key)
-                return res.status(200).json({ token })
+                return res.status(200).json({ token, message: `Logged in as ${foundUser.firstName}`, firstName: foundUser.firstName })
             } else {
                 return res.status(401).json({
                     message: "Authorization Failed"
